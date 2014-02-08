@@ -110,7 +110,11 @@ Interest::GetSerializedSize (void) const
       (m_interest->GetExclude () == 0 ? 0 : (1 + NdnSim::SerializedSizeExclude (*m_interest->GetExclude ())))
       )/* selectors */ +
      
-     (2 + 0)/* options */);
+     // (2 + 0)/* options */);
+     (2 +
+      1 /*pitFowardingFlag*/ + 
+      (m_interest->GetPitForwardingNamePtr () == 0 ? 0 : NdnSim::SerializedSizeName (m_interest->GetPitForwardingName ()))
+     )/* options */);
   
   NS_LOG_INFO ("Serialize size = " << size);
   return size;
@@ -147,7 +151,19 @@ Interest::Serialize (Buffer::Iterator start) const
       NdnSim::SerializeExclude (start, *m_interest->GetExclude ());
     }
   
-  start.WriteU16 (0); // no options
+  //start.WriteU16 (0); // no options
+  // options: PitFowarding Flag + Name 
+  if (m_interest->GetPitForwardingNamePtr () == 0)
+    {
+      start.WriteU16 (1/*pitFowardingFlag*/);
+      start.WriteU8 (m_interest->GetPitForwardingFlag ());
+    }
+  else
+    {
+      start.WriteU16 (1/*pitFowardingFlag*/ + NdnSim::SerializedSizeName (m_interest->GetPitForwardingName ()) ); 
+      start.WriteU8 (m_interest->GetPitForwardingFlag ());
+      NdnSim::SerializeName (start, m_interest->GetPitForwardingName ());
+    }
 }
 
 uint32_t
@@ -179,10 +195,19 @@ Interest::Deserialize (Buffer::Iterator start)
 
       m_interest->SetExclude (NdnSim::DeserializeExclude (i));
     }
-  i.ReadU16 ();
+
+  uint16_t optionLen = i.ReadU16 ();
+  if (optionLen > 0)
+    {
+      m_interest->SetPitForwardingFlag (i.ReadU8 ());
+      
+      if (optionLen > 1)
+        {
+          m_interest->SetPitForwardingName (NdnSim::DeserializeName (i));
+        }
+    }
 
   NS_ASSERT (GetSerializedSize () == (i.GetDistanceFrom (start)));
-
   return i.GetDistanceFrom (start);
 }
 

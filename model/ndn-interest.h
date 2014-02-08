@@ -179,6 +179,52 @@ public:
   GetNack () const;
 
   /**
+   * @brief Set PIT-forwarding flag
+   *
+   * Value 1 means this Interest can be used by PIT forwarding.
+   * Otherwise, it can not be used by PIT forwarding. 
+   */
+  void
+  SetPitForwardingFlag (uint8_t flag);
+ 
+  /**
+   * @brief Get PIT-forwarding flag
+   *
+   * Value 1 means this Interest can be used by PIT forwarding.
+   * Otherwise, it can not be used by PIT forwarding. 
+   */
+  uint8_t
+  GetPitForwardingFlag () const;
+ 
+  /**
+   * @brief Set PIT-forwarding name
+   *
+   * @param name smart pointer to Name
+   */
+  void
+  SetPitForwardingName (Ptr<Name> name);
+ 
+  /**
+   * @brief Set PIT-forwarding name
+   *
+   * @param name const reference to Name object
+   */
+  void
+  SetPitForwardingName (const Name &name);
+ 
+  /**
+   * @brief Get smart pointer to PIT Forwarding Name (to avoid extra memory usage)
+   */
+  Ptr<const Name>
+  GetPitForwardingNamePtr () const;
+
+  /**
+   * @brief Get reference to PIT Forwarding Name object 
+   */
+  const Name&
+  GetPitForwardingName () const;
+ 
+  /**
    * @brief Set exclude filter of interest packet
    *
    * Empty or 0 means no exclude filter
@@ -191,7 +237,7 @@ public:
    */
   Ptr<const Exclude>
   GetExclude () const;
-  
+ 
   /**
    * @brief Set virtual "payload" of interest packet
    *
@@ -241,6 +287,10 @@ private:
   uint8_t  m_nackType;      ///< @brief Negative Acknowledgement type
 
   Ptr<Exclude> m_exclude;   ///< @brief Exclude filter
+
+  uint8_t m_pitForwardingFlag;    ///< @brief PIT forwarding flag
+  Ptr<Name> m_pitForwardingName;  ///< @brief PIT forwarding name
+
   Ptr<Packet> m_payload;    ///< @brief virtual payload
 
   mutable Ptr<const Packet> m_wire;
