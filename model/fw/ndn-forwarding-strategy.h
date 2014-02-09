@@ -97,20 +97,6 @@ public:
   OnData (Ptr<Face> face,
           Ptr<Data> data);
 
-
-  /**
-   * \brief Propagate an Interest via PIT Forwarding 
-   *
-   * 
-   * @param inFace      incoming face
-   * @param interest    interest packet
-   * @param pitEntry    corresponding PIT entry
-   */
-  virtual bool
-  InterestPitForwarding (Ptr<Face> inFace,
-                         Ptr<const Interest> interest,
-                         Ptr<pit::Entry> pitEntry);
-
   /**
    * @brief Event fired just before PIT entry is removed by timeout
    * @param pitEntry PIT entry to be removed

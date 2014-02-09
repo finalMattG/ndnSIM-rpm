@@ -269,60 +269,10 @@ ForwardingStrategy::OnData (Ptr<Face> inFace,
     }
 }
 
-bool
-ForwardingStrategy::InterestPitForwarding (Ptr<Face> inFace,
-                                           Ptr<const Interest> interest,
-                                           Ptr<pit::Entry> pitEntry)
-{
-
-  if (interest->GetPitForwardingFlag () != 0) 
-    {
-       ///To-Do: Lookup in PitForwardingTable (PFT)
-       ///       Forward matched Interest
-    }
-
-  if (interest->GetPitForwardingNamePtr () == 0)
-    {
-      return false;
-    } 
-
-  NS_LOG_FUNCTION (this << interest->GetName ());
-  NS_LOG_LOGIC ("PF Name " << interest->GetPitForwardingName ());
-  Ptr<pit::Entry> pfEntry = m_pit->Find (interest->GetPitForwardingName ());
-  if (pfEntry == 0)
-    {
-      return false;
-    }
-
-  Ptr<const Interest> pfInterest = pfEntry->GetInterest (); 
-  // Issue: for Interests with the same name, only the first one is here
-  if (pfInterest->GetPitForwardingFlag () == 0)
-    {
-      return false;
-    }
-  int propagatedCount = 0;
-  for (pit::Entry::in_iterator face = pfEntry-> GetIncoming ().begin ();
-       face != pfEntry-> GetIncoming ().end ();
-       face++)
-    {
-      if (inFace == face->m_face)
-        {
-          continue;
-        }
-      if (TrySendOutInterest (inFace, face->m_face, interest, pitEntry))
-        {
-          NS_LOG_DEBUG ("Propagated to " << face->m_face);
-          propagatedCount++;
-        }
-    }
-  NS_LOG_INFO ("Propagated to " << propagatedCount << " faces");
-  return propagatedCount > 0;
-}
-
 void
 ForwardingStrategy::DidCreatePitEntry (Ptr<Face> inFace,
                                        Ptr<const Interest> interest,
-                                       Ptr<pit::Entry> pitEntry)
+                                       Ptr<pit::Entry> pitEntrypitEntry)
 {
 }
 
@@ -511,12 +461,6 @@ ForwardingStrategy::PropagateInterest (Ptr<Face> inFace,
   pitEntry->AddIncoming (inFace/*, interest->GetInterestLifetime ()*/);
   /// @todo Make lifetime per incoming interface
   pitEntry->UpdateLifetime (interest->GetInterestLifetime ());
-
-  // If InterestPitForwarding() succeeded, skip DoPropagateInterest ()
-  if (InterestPitForwarding (inFace, interest, pitEntry))
-    {
-        return;
-    }
 
   bool propagated = DoPropagateInterest (inFace, interest, pitEntry);
 
