@@ -223,7 +223,35 @@ public:
    */
   const Name&
   GetPitForwardingName () const;
+
+    /**
+   * @brief Set forwarding hint
+   *
+   * @param name smart pointer to Name
+   */
+  void
+  SetForwardingHint (Ptr<Name> name);
  
+  /**
+   * @brief Set forwarding hint
+   *
+   * @param name const reference to Name object
+   */
+  void
+  SetForwardingHint (const Name &name);
+ 
+  /**
+   * @brief Get smart pointer to forwarding hint (to avoid extra memory usage)
+   */
+  Ptr<const Name>
+  GetForwardingHintPtr () const;
+
+  /**
+   * @brief Get reference to forwarding hint 
+   */
+  const Name&
+  GetForwardingHint () const;
+
   /**
    * @brief Set exclude filter of interest packet
    *
@@ -290,6 +318,8 @@ private:
 
   uint8_t m_pitForwardingFlag;    ///< @brief PIT forwarding flag
   Ptr<Name> m_pitForwardingName;  ///< @brief PIT forwarding name
+
+  Ptr<Name> m_forwardingHint;     ///< @brief forwarding hint
 
   Ptr<Packet> m_payload;    ///< @brief virtual payload
 

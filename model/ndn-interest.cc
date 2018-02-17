@@ -38,6 +38,7 @@ Interest::Interest (Ptr<Packet> payload/* = Create<Packet> ()*/)
   , m_exclude (0)
   , m_pitForwardingFlag (0)
   , m_pitForwardingName (0)
+  , m_forwardingHint (0)
   , m_payload (payload)
   , m_wire (0)
 {
@@ -56,6 +57,7 @@ Interest::Interest (const Interest &interest)
   , m_exclude          (interest.m_exclude ? Create<Exclude> (*interest.GetExclude ()) : 0)
   , m_pitForwardingFlag (interest.m_pitForwardingFlag)
   , m_pitForwardingName (interest.m_pitForwardingName ? Create<Name> (interest.GetPitForwardingName ()) : 0)
+  , m_forwardingHint   (interest.m_forwardingHint ? Create<Name> (interest.GetForwardingHint ()) : 0)
   , m_payload          (interest.GetPayload ()->Copy ())
   , m_wire             (0)
 {
@@ -191,6 +193,32 @@ const Name&
 Interest::GetPitForwardingName () const
 {
   return *m_pitForwardingName;
+}
+
+void
+Interest::SetForwardingHint (Ptr<Name> name)
+{
+  m_forwardingHint = name;
+  m_wire = 0;
+}
+
+void
+Interest::SetForwardingHint (const Name &name)
+{
+  m_forwardingHint = Create<Name> (name);
+  m_wire = 0;
+}
+
+Ptr<const Name>
+Interest::GetForwardingHintPtr () const
+{
+  return m_forwardingHint;
+}
+ 
+const Name&
+Interest::GetForwardingHint () const
+{
+  return *m_forwardingHint;
 }
 
 void

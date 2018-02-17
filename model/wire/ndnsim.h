@@ -41,6 +41,7 @@ namespace ndnSIM {
  *
  *  Options ::= PitForwardingFlag  (1 Byte)
  *              PitForwardingName  (variable length like Name)
+ *              ForwardingHint     (variable length like Name)
  *
  * Minumum size of the Interest packet: 1 + 4 + 2 + 1 + (2 + 0) + (2 + 0) + (2 + 0) = 14
  *

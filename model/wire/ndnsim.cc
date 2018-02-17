@@ -113,7 +113,8 @@ Interest::GetSerializedSize (void) const
      // (2 + 0)/* options */);
      (2 +
       1 /*pitFowardingFlag*/ + 
-      (m_interest->GetPitForwardingNamePtr () == 0 ? 0 : NdnSim::SerializedSizeName (m_interest->GetPitForwardingName ()))
+      (m_interest->GetPitForwardingNamePtr () == 0 ? 0 : NdnSim::SerializedSizeName (m_interest->GetPitForwardingName ())) +
+      (m_interest->GetForwardingHintPtr () == 0 ? 0 : NdnSim::SerializedSizeName (m_interest->GetForwardingHint ()))
      )/* options */);
   
   NS_LOG_INFO ("Serialize size = " << size);
@@ -151,18 +152,24 @@ Interest::Serialize (Buffer::Iterator start) const
       NdnSim::SerializeExclude (start, *m_interest->GetExclude ());
     }
   
-  //start.WriteU16 (0); // no options
-  // options: PitFowarding Flag + Name 
-  if (m_interest->GetPitForwardingNamePtr () == 0)
+  // options: PitFowarding Flag, PitForwarding Name, Forwarding Hint
+
+  uint16_t optionsSize = 1/* pitForwardingFlag */ +
+    (m_interest->GetPitForwardingNamePtr () != 0 ?
+      NdnSim::SerializedSizeName (m_interest->GetPitForwardingName ()) : 0) +
+    (m_interest->GetForwardingHintPtr () != 0 ?
+      NdnSim::SerializedSizeName (m_interest->GetForwardingHint ()) : 0);
+  
+  start.WriteU16(optionsSize);
+  start.WriteU8 (m_interest->GetPitForwardingFlag ());
+
+  if (m_interest->GetPitForwardingNamePtr () != 0)
     {
-      start.WriteU16 (1/*pitFowardingFlag*/);
-      start.WriteU8 (m_interest->GetPitForwardingFlag ());
-    }
-  else
-    {
-      start.WriteU16 (1/*pitFowardingFlag*/ + NdnSim::SerializedSizeName (m_interest->GetPitForwardingName ()) ); 
-      start.WriteU8 (m_interest->GetPitForwardingFlag ());
       NdnSim::SerializeName (start, m_interest->GetPitForwardingName ());
+    }
+  if (m_interest->GetForwardingHintPtr () != 0)
+    {
+      NdnSim::SerializeName (start, m_interest->GetForwardingHint ());
     }
 }
 
@@ -204,6 +211,11 @@ Interest::Deserialize (Buffer::Iterator start)
       if (optionLen > 1)
         {
           m_interest->SetPitForwardingName (NdnSim::DeserializeName (i));
+        }
+
+      if (!i.IsEnd ())
+        {
+          m_interest->SetForwardingHint (NdnSim::DeserializeName (i));
         }
     }
 
