@@ -153,6 +153,30 @@ public:
    */
   Ptr<const Packet>
   GetPayload () const;
+
+  /**
+   * \brief Set optional locator field
+   **/
+  void
+  SetLocator (Ptr<Name> locator);
+
+  /**
+   * @brief Another, less efficient, variant of setting the optional locator
+   */
+  void
+  SetLocator (const Name &locator);
+  
+  /**
+   * @brief Get optional locator field
+   */
+  const Name&
+  GetLocator () const;
+
+  /**
+   * @brief Get smart pointer to the optional locator (to avoid extra memory usage)
+   */
+  Ptr<const Name>
+  GetLocatorPtr () const;
   
   /**
    * @brief Get wire formatted packet
@@ -186,6 +210,7 @@ private:
   uint32_t m_signature; // 0, means no signature, any other value application dependent (not a real signature)
   Ptr<Packet> m_payload;
   Ptr<Name> m_keyLocator;
+  Ptr<Name> m_locator;
 
   mutable Ptr<const Packet> m_wire;
 };

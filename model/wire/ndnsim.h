@@ -32,22 +32,16 @@ namespace ndnSIM {
  *
  * Optimized and simplified formatting of Interest packets 
  *
- *	Interest ::= Nonce 
- *	     	     Scope 
- *		     InterestLifetime 
- *	     	     Name 
- *	     	     Selectors 
- *	     	     Options
+ *	Interest ::= Nonce
+ *	     	       Scope
+ *		           InterestLifetime
+ *	     	       Name
+ *	     	       Selectors
+ *	     	       Options
  *
  *  Options ::= PitForwardingFlag  (1 Byte)
  *              PitForwardingName  (variable length like Name)
  *              ForwardingHint     (variable length like Name)
- *
- * Minumum size of the Interest packet: 1 + 4 + 2 + 1 + (2 + 0) + (2 + 0) + (2 + 0) = 14
- *
- * Maximum size of the Interest packet: 1 + 4 + 2 + 1 + (2 + 65535) + (2 + 65535) + (2 + 65535) = 196619
- *
- * ::
  *
  *         0                   1                   2                   3
  *         0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -112,8 +106,11 @@ private:
  * @see http://ndnsim.net/new-packet-formats.html
  *
  *	Data ::= Signature
- *                	  Name
- *                   	  Content
+ *           Name
+ *           Content
+ *           Options
+ * 
+ *  Options ::= Locator
  *
  *      0                   1                   2                   3
  *      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -128,6 +125,12 @@ private:
  *      |-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
  *      ~                                                               ~
  *      ~                             Name                              ~
+ *      |							        |	
+ *      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ *      |            Length             |                               |
+ *      |-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+ *      ~                                                               ~
+ *      ~                           Options                             ~
  *      |							        |	
  *      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *      |            Length             |                               |

@@ -310,6 +310,12 @@ Data::GetSerializedSize () const
   if (m_data->GetSignature () != 0)
     size += 4;
   
+  size += 2;
+  if (m_data->GetLocatorPtr () != 0)
+    {
+      size += NdnSim::SerializedSizeName (m_data->GetLocator ());
+    }
+  
   NS_LOG_INFO ("Serialize size = " << size);
   return size;
 }
@@ -335,6 +341,17 @@ Data::Serialize (Buffer::Iterator start) const
 
   // name
   NdnSim::SerializeName (start, m_data->GetName ());
+
+  // options
+  if (m_data->GetLocatorPtr () != 0)
+    {
+      start.WriteU16(NdnSim::SerializedSizeName(m_data->GetLocator ()));
+      NdnSim::SerializeName (start, m_data->GetLocator ());
+    }
+  else
+    {
+      start.WriteU16(0);
+    }
 
   // content
   // for now assume that contentdata length is zero
@@ -378,6 +395,9 @@ Data::Deserialize (Buffer::Iterator start)
     throw new DataException ();
 
   m_data->SetName (NdnSim::DeserializeName (i));
+
+  if (i.ReadU16 () > 0)
+    m_data->SetLocator (NdnSim::DeserializeName (i));
 
   if (i.ReadU16 () != (2 + 4 + 2 + 2 + (2 + 0))) // content length
     throw new DataException ();

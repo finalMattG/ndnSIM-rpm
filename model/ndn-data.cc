@@ -157,5 +157,32 @@ Data::GetPayload () const
   return m_payload;
 }
 
+void
+Data::SetLocator (Ptr<Name> locator)
+{
+  m_locator = locator;
+  m_wire = 0;
+}
+
+void
+Data::SetLocator (const Name &locator)
+{
+  m_locator = Create<Name> (locator);
+  m_wire = 0;
+}
+
+const Name&
+Data::GetLocator () const
+{
+  if (m_locator==0) throw DataException();
+  return *m_locator;
+}
+
+Ptr<const Name>
+Data::GetLocatorPtr () const
+{
+  return m_locator;
+}
+
 } // namespace ndn
 } // namespace ns3
