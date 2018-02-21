@@ -196,14 +196,14 @@ Interest::GetPitForwardingName () const
 }
 
 void
-Interest::SetForwardingHint (Ptr<Name> name)
+Interest::SetForwardingHint (Ptr<Name> name) const
 {
   m_forwardingHint = name;
   m_wire = 0;
 }
 
 void
-Interest::SetForwardingHint (const Name &name)
+Interest::SetForwardingHint (const Name &name) const
 {
   m_forwardingHint = Create<Name> (name);
   m_wire = 0;

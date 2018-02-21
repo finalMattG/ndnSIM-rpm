@@ -230,7 +230,7 @@ public:
    * @param name smart pointer to Name
    */
   void
-  SetForwardingHint (Ptr<Name> name);
+  SetForwardingHint (Ptr<Name> name) const;
  
   /**
    * @brief Set forwarding hint
@@ -238,7 +238,7 @@ public:
    * @param name const reference to Name object
    */
   void
-  SetForwardingHint (const Name &name);
+  SetForwardingHint (const Name &name) const;
  
   /**
    * @brief Get smart pointer to forwarding hint (to avoid extra memory usage)
@@ -319,7 +319,7 @@ private:
   uint8_t m_pitForwardingFlag;    ///< @brief PIT forwarding flag
   Ptr<Name> m_pitForwardingName;  ///< @brief PIT forwarding name
 
-  Ptr<Name> m_forwardingHint;     ///< @brief forwarding hint
+  mutable Ptr<Name> m_forwardingHint;     ///< @brief forwarding hint
 
   Ptr<Packet> m_payload;    ///< @brief virtual payload
 
